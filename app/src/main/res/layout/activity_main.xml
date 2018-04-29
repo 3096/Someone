@@ -11,13 +11,12 @@
         android:layout_width="93dp"
         android:layout_height="48dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/boxLat"
-        app:layout_constraintVertical_bias="0.045"
-        tools:layout_editor_absoluteX="106dp" />
+        app:layout_constraintVertical_bias="0.058"
+        tools:layout_editor_absoluteX="124dp" />
 
     <Button
         android:id="@+id/button"
@@ -35,21 +34,21 @@
         android:layout_width="28dp"
         android:layout_height="27dp"
         app:srcCompat="@android:drawable/ic_notification_overlay"
-        tools:layout_editor_absoluteX="62dp"
-        tools:layout_editor_absoluteY="59dp" />
+        tools:layout_editor_absoluteX="78dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <ImageView
         android:id="@+id/compass"
-        android:layout_width="394dp"
-        android:layout_height="408dp"
+        android:layout_width="358dp"
+        android:layout_height="377dp"
         android:layout_marginBottom="128dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.557"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.084"
@@ -58,22 +57,22 @@
     <EditText
         android:id="@+id/boxGPS"
         android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_marginTop="160dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="2dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/welcome_message"
         app:layout_constraintTop_toBottomOf="@+id/compass"
-        tools:layout_editor_absoluteX="106dp" />
+        tools:layout_editor_absoluteX="124dp" />
 
     <EditText
         android:id="@+id/boxLat"
         android:layout_width="91dp"
         android:layout_height="42dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintTop_toBottomOf="@+id/boxGPS"
-        tools:layout_editor_absoluteX="108dp" />
+        tools:layout_editor_absoluteX="124dp" />
 
 </android.support.constraint.ConstraintLayout>

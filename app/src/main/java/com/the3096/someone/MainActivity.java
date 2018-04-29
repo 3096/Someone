@@ -40,10 +40,16 @@ public class MainActivity extends AppCompatActivity {
 
                                           double myLat = myLocation.getLatitude();
                                           double myLon = myLocation.getLongitude();
+                                          double destLon;
+                                          double destLat;
 
-                                          double destLon = Double.parseDouble(lonField.getText().toString());
-                                          double destLat = Double.parseDouble(latField.getText().toString());
-
+                                          try {
+                                              destLon = Double.parseDouble(lonField.getText().toString());
+                                              destLat = Double.parseDouble(latField.getText().toString());
+                                          } catch(Exception e) {
+                                              destLon = 0;
+                                              destLat = 0;
+                                          }
                                           destLocation.setLatitude(destLat);
                                           destLocation.setLongitude(destLon);
 
@@ -83,11 +89,11 @@ public class MainActivity extends AppCompatActivity {
         return converted;
     }
 
-    public void setDot(double deg){
+    public void setDot(double deg) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
-        float radius = width/4;
+        float radius = width/2;
         double radian = degreeToRadian(deg);
         ImageView dot = (ImageView) findViewById(R.id.redDot);
         radian  += (Math.PI)/2;
