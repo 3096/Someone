@@ -7,11 +7,17 @@ import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import java.io.DataOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
 
     LocationHelper locationHelper;
+
+    Socket socketO;
+    DataOutputStream dOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +29,40 @@ public class MainActivity extends AppCompatActivity {
         final Button button = findViewById(R.id.button);
         final EditText textField = findViewById(R.id.editText);
 
+        byte[] addressArr = {1, 1, 1, 1};
+        int port = 1337;
+        try {
+            InetAddress address = InetAddress.getByAddress(addressArr);
+            socketO = new Socket(address, port);
+            dOut = new DataOutputStream(socketO.getOutputStream());
+        } catch (Exception e) {
+
+        } finally {
+
+        }
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textField.setText(locationHelper.getLocation().toString());
+                try {
+                    dOut.writeByte(1);
+                    dOut.writeDouble(locationHelper.getLocation().getLatitude());
+                    dOut.flush();
+
+                    dOut.writeByte(2);
+                    dOut.writeDouble(locationHelper.getLocation().getLongitude());
+                    dOut.flush();
+
+                    String sentStr = "Sent"+locationHelper.getLocation().toString();
+                    textField.setText(sentStr);
+                } catch (Exception e) {
+                    textField.setText("sad trombone");
+                } finally {
+
+                }
+
+
             }
         }
 
