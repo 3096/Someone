@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     final private float RADIUS_COMPASS = 200;
@@ -27,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
         locationHelper = new LocationHelper(this);
 
         final Button button = findViewById(R.id.button);
-        final EditText textField = findViewById(R.id.editText);
+        final EditText coordField = findViewById(R.id.boxGPS);
+        final EditText lonField = findViewById(R.id.boxLon);
+        final EditText latField = findViewById(R.id.boxLat);
 
         button.setOnClickListener(new View.OnClickListener() {
                                       @Override
@@ -38,14 +39,17 @@ public class MainActivity extends AppCompatActivity {
                                           double myLat = myLocation.getLatitude();
                                           double myLon = myLocation.getLongitude();
 
-                                          destLocation.setLatitude(myLat * 1.001);  // Set fake destination coordinates
-                                          destLocation.setLongitude(myLat * 1.001);
+                                          double destLon = Double.parseDouble(lonField.getText().toString());
+                                          double destLat = Double.parseDouble(latField.getText().toString());
+
+                                          destLocation.setLatitude(destLat);
+                                          destLocation.setLongitude(destLon);
 
                                           double bearingToDest = myLocation.bearingTo(destLocation);
                                           setDot(bearingToDest);
 
                                           String myCoords = "Lat: " + myLat + ", Long:" + myLon + ", Bearing: " + bearingToDest;
-                                          textField.setText(myCoords);
+                                          coordField.setText(myCoords);
                                           setDot(bearingToDest);
                                       }
                                   }
