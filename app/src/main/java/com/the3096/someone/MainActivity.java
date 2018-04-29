@@ -5,6 +5,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +19,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         locationHelper = new LocationHelper(this);
+
+        final Button button = findViewById(R.id.button);
+        final EditText textField = findViewById(R.id.editText);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textField.setText(locationHelper.getLocation().toString());
+            }
+        }
+
+        );
     }
 
     @Override
