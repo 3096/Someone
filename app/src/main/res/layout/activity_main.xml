@@ -9,13 +9,14 @@
     <EditText
         android:id="@+id/editText"
         android:layout_width="252dp"
-        android:layout_height="88dp"
+        android:layout_height="84dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="@string/welcome_message"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 
@@ -23,7 +24,7 @@
         android:id="@+id/button"
         android:layout_width="107dp"
         android:layout_height="57dp"
-        android:text="@string/test_message"
+        android:text="@string/button_message"
         app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

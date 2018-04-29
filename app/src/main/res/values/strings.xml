@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">OwlMeetSomeone</string>
+    <string name="welcome_message">Welcome to the OwlMeetSomeone App!</string>
+    <string name="button_message">Find Someone</string>
 </resources>
