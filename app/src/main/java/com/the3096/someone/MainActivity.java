@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -16,8 +17,11 @@ public class MainActivity extends AppCompatActivity {
 
     LocationHelper locationHelper;
 
-    Socket socketO;
+    Socket socket;
     DataOutputStream dOut;
+    DataInputStream dIn;
+
+    boolean sending = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +33,21 @@ public class MainActivity extends AppCompatActivity {
         final Button button = findViewById(R.id.button);
         final EditText textField = findViewById(R.id.editText);
 
-        byte[] addressArr = {1, 1, 1, 1};
+        String host = "127.0.0.1";
+        String server = "10.29.5.105";
         int port = 1337;
         try {
-            InetAddress address = InetAddress.getByAddress(addressArr);
-            socketO = new Socket(address, port);
-            dOut = new DataOutputStream(socketO.getOutputStream());
-        } catch (Exception e) {
+            InetAddress address;
 
+            if(sending) {
+                socket = new Socket(server, port);
+                dOut = new DataOutputStream(socket.getOutputStream());
+            } else {
+                socket = new Socket(host, port);
+                dIn = new DataInputStream(socket.getInputStream());
+            }
+        } catch (Exception e) {
+            textField.setText(e.toString());
         } finally {
 
         }
@@ -46,23 +57,48 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    dOut.writeByte(1);
-                    dOut.writeDouble(locationHelper.getLocation().getLatitude());
-                    dOut.flush();
+                    if(sending ) {
+                        dOut.writeByte(1);
+                        dOut.writeDouble(locationHelper.getLocation().getLatitude());
+                        dOut.flush();
 
-                    dOut.writeByte(2);
-                    dOut.writeDouble(locationHelper.getLocation().getLongitude());
-                    dOut.flush();
+                        dOut.writeByte(2);
+                        dOut.writeDouble(locationHelper.getLocation().getLongitude());
+                        dOut.flush();
 
-                    String sentStr = "Sent"+locationHelper.getLocation().toString();
-                    textField.setText(sentStr);
+                        String sentStr = "Sent" + locationHelper.getLocation().toString();
+                        textField.setText(sentStr);
+
+                        dOut.close();
+                    } else {
+                        textField.setText("Listening...");
+
+                        double lat = -1, lon = -1;
+                        boolean done = false;
+                        while(!done) {
+                            byte messageType = dIn.readByte();
+
+                            switch(messageType)
+                            {
+                                case 1: // Type A
+                                    lat = dIn.readDouble();
+                                    break;
+                                case 2: // Type B
+                                    lon = dIn.readDouble();
+                                    break;
+                                default:
+                                    done = true;
+                            }
+                        }
+
+                        String readStr = lat + "," + lon;
+                        textField.setText(readStr);
+                    }
                 } catch (Exception e) {
-                    textField.setText("sad trombone");
+                    textField.setText(e.toString());
                 } finally {
 
                 }
-
-
             }
         }
 
