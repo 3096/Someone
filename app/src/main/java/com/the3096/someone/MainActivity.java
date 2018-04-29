@@ -3,6 +3,7 @@ package com.the3096.someone;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
@@ -10,76 +11,81 @@ import android.widget.EditText;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
 
     LocationHelper locationHelper;
 
-    Socket socket;
-    DataOutputStream dOut;
-    DataInputStream dIn;
+    final boolean sending = true;
 
-    boolean sending = false;
+    Button button;
+    EditText textField;
+
+    Thread networkThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        button = findViewById(R.id.button);
+        textField = findViewById(R.id.editText);
+
         locationHelper = new LocationHelper(this);
 
-        final Button button = findViewById(R.id.button);
-        final EditText textField = findViewById(R.id.editText);
-
-        String host = "127.0.0.1";
-        String server = "10.29.5.105";
-        int port = 1337;
-        try {
-            InetAddress address;
-
-            if(sending) {
-                socket = new Socket(server, port);
-                dOut = new DataOutputStream(socket.getOutputStream());
-            } else {
-                socket = new Socket(host, port);
-                dIn = new DataInputStream(socket.getInputStream());
-            }
-        } catch (Exception e) {
-            textField.setText(e.toString());
-        } finally {
-
-        }
-
+        networkThread = new Thread(new NetworkThread());
+        networkThread.start();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+            }
+        });
+    }
+
+    class NetworkThread implements Runnable {
+
+        public void run() {
+            String server = "192.168.1.106";
+            int port = 1337;
+
+            while(true) {
                 try {
-                    if(sending ) {
-                        dOut.writeByte(1);
-                        dOut.writeDouble(locationHelper.getLocation().getLatitude());
-                        dOut.flush();
+                    Socket socket;
+                    DataOutputStream dOut;
+                    DataInputStream dIn;
 
-                        dOut.writeByte(2);
-                        dOut.writeDouble(locationHelper.getLocation().getLongitude());
-                        dOut.flush();
+                    if (sending) {
+                        socket = new Socket(server, port);
+                        dOut = new DataOutputStream(socket.getOutputStream());
 
-                        String sentStr = "Sent" + locationHelper.getLocation().toString();
-                        textField.setText(sentStr);
+                        while (true) {
+                            dOut.writeByte(1);
+                            dOut.writeDouble(locationHelper.getLocation().getLatitude());
+                            dOut.flush();
 
-                        dOut.close();
+                            dOut.writeByte(2);
+                            dOut.writeDouble(locationHelper.getLocation().getLongitude());
+                            dOut.flush();
+
+                            Thread.sleep(1000);
+                        }
                     } else {
+
+                        ServerSocket serverSocket = new ServerSocket(port);
+                        socket = serverSocket.accept();
+                        dIn = new DataInputStream(socket.getInputStream());
                         textField.setText("Listening...");
 
                         double lat = -1, lon = -1;
                         boolean done = false;
-                        while(!done) {
+                        while (!done) {
                             byte messageType = dIn.readByte();
 
-                            switch(messageType)
-                            {
+                            switch (messageType) {
                                 case 1: // Type A
                                     lat = dIn.readDouble();
                                     break;
@@ -89,20 +95,19 @@ public class MainActivity extends AppCompatActivity {
                                 default:
                                     done = true;
                             }
-                        }
 
-                        String readStr = lat + "," + lon;
-                        textField.setText(readStr);
+                            String readStr = lat + "," + lon;
+                            textField.setText(readStr);
+                        }
                     }
                 } catch (Exception e) {
-                    textField.setText(e.toString());
+                    Log.e("someone", "exception", e);
                 } finally {
 
                 }
+
             }
         }
-
-        );
     }
 
     @Override
