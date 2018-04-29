@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
     final private float RADIUS_COMPASS = 200;
     LocationHelper locationHelper;
 
+    static double offset = 0.;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
                                           String myCoords = "Lat: " + myLat + ", Long:" + myLon + ", Bearing: " + bearingToDest;
                                           textField.setText(myCoords);
+                                          setDot(bearingToDest);
                                       }
                                   }
         );
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         double converted = deg * (Math.PI / 180.0);
         return converted;
     }
-   
+
     public void setDot(double deg){
         double radian = degreeToRadian(deg);
         ImageView dot = (ImageView) findViewById(R.id.redDot);
