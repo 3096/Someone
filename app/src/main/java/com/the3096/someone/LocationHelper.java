@@ -58,9 +58,10 @@ class LocationHelper {
         mLocationManager.requestLocationUpdates(mLocationProvider, 0, 0, mLocationListener);
     }
 
+    @SuppressLint("MissingPermission")
     Location getLocation() {
         if(mLocation != null)
             return mLocation;
-        return new Location(mLocationProvider);
-    }
+        return mLocationManager.getLastKnownLocation(mLocationProvider);
+      }
 }

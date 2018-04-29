@@ -2,7 +2,6 @@ package com.the3096.someone;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +20,31 @@ public class MainActivity extends AppCompatActivity {
 
         locationHelper = new LocationHelper(this);
 
-        setDot(Math.PI/2);
+ 	setDot(Math.PI/2);
+
+        final Button button = findViewById(R.id.button);
+        final EditText textField = findViewById(R.id.editText);
+
+        button.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View v) {
+                                          Location myLocation = locationHelper.getLocation();
+                                          Location destLocation = new Location("fake");
+
+                                          double myLat = myLocation.getLatitude();
+                                          double myLon = myLocation.getLongitude();
+
+                                          destLocation.setLatitude(myLat * 1.001);  // Set fake destination coordinates
+                                          destLocation.setLongitude(myLat * 1.001);
+
+                                          double bearingToDest = myLocation.bearingTo(destLocation);
+
+                                          String myCoords = "Lat: " + myLat + ", Long:" + myLon + ", Bearing: " + bearingToDest;
+                                          textField.setText(myCoords);
+                                      }
+                                  }
+
+        );
     }
 
     @Override
@@ -43,37 +66,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /* Called when the user taps the button.  Or button is not necessary? */
-    public void getDirections(View view) {
-
-        // Get current location coordinates (latitude, longititude) of user.
-        double userLong = 0;
-        double userLat = -122.129932;
-
-        // Get location coordinates of the second user.  Hard-code it as a constant for now.
-        double destinationLong = 37.362511;
-        double destinationLat = -122.129932;
-
-        //Calculate the bearing to the destination and display it in the activity
+    public double degreeToRadian(double deg) {
+        double converted = deg * (Math.PI / 180.0);
+        return converted;
     }
-
-    public double degreeToRadian(double degree) {
-        return degree * (Math.PI / 180.0);
-    }
-
-    public double getBearing(double userLong, double userLat, double destLong, double destLat) {
-        userLong = degreeToRadian(userLong);
-        userLat = degreeToRadian(userLat);
-        destLong = degreeToRadian(destLong);
-        destLat = degreeToRadian(destLat);
-
-        double angle = Math.atan2(destLat - userLat, destLong - userLong);
-
-        return Math.PI - angle;
-    }
-
-
-
+   
     public void setDot(double radian){
         ImageView dot = (ImageView) findViewById(R.id.redDot);
         radian  += (Math.PI)/2;
