@@ -39,12 +39,10 @@ class LocationHelper {
     void init() {
         mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 
-        final TextView textView = mContext.findViewById(R.id.text);
         mLocationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 mLocation = location;
-                textView.setText(mLocation.toString());
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
