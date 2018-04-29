@@ -64,4 +64,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    public double degreeToRadian(double deg) {
+        double converted = deg * (Math.PI / 180.0);
+        return converted;
+    }
 }
