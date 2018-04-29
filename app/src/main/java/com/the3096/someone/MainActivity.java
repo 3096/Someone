@@ -2,10 +2,13 @@ package com.the3096.someone;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
         locationHelper = new LocationHelper(this);
 
- 	setDot(Math.PI/2);
+ 	    setDot(Math.PI/2);
 
         final Button button = findViewById(R.id.button);
         final EditText textField = findViewById(R.id.editText);
