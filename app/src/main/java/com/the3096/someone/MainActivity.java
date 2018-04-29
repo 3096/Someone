@@ -6,10 +6,16 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    GPSTracker gps = new GPSTracker(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(!gps.canGetLocation()){
+            gps.showSettingsAlert();
+        }
     }
 
     /* Called when the user taps the button.  Or button is not necessary? */
