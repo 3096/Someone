@@ -2,13 +2,16 @@ package com.the3096.someone;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-
+    final private float RADIUS_COMPASS = 200;
     LocationHelper locationHelper;
 
     @Override
@@ -17,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         locationHelper = new LocationHelper(this);
+
+        setDot(Math.PI/2);
     }
 
     @Override
@@ -65,5 +70,19 @@ public class MainActivity extends AppCompatActivity {
         double angle = Math.atan2(destLat - userLat, destLong - userLong);
 
         return Math.PI - angle;
+    }
+
+
+
+    public void setDot(double radian){
+        ImageView dot = (ImageView) findViewById(R.id.redDot);
+        radian  += (Math.PI)/2;
+        float x = (float) Math.cos(radian) * RADIUS_COMPASS + RADIUS_COMPASS;
+        float y = (float) Math.sin(radian) * - RADIUS_COMPASS + RADIUS_COMPASS;
+
+        Log.e("x location))", "" +x);
+        Log.e("y location))", "" +y);
+        dot.setY(y);
+        dot.setX(x);
     }
 }
