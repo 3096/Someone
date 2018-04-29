@@ -23,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
         locationHelper = new LocationHelper(this);
 
- 	    setDot(Math.PI/2);
-
         final Button button = findViewById(R.id.button);
         final EditText textField = findViewById(R.id.editText);
 
@@ -41,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
                                           destLocation.setLongitude(myLat * 1.001);
 
                                           double bearingToDest = myLocation.bearingTo(destLocation);
+                                          setDot(bearingToDest);
 
                                           String myCoords = "Lat: " + myLat + ", Long:" + myLon + ", Bearing: " + bearingToDest;
                                           textField.setText(myCoords);
                                       }
                                   }
-
         );
     }
 
@@ -74,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
         return converted;
     }
    
-    public void setDot(double radian){
+    public void setDot(double deg){
+        double radian = degreeToRadian(deg);
         ImageView dot = (ImageView) findViewById(R.id.redDot);
         radian  += (Math.PI)/2;
         float x = (float) Math.cos(radian) * RADIUS_COMPASS + RADIUS_COMPASS;
