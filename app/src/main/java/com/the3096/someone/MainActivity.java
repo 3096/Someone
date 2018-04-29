@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     LocationHelper locationHelper;
 
     static double offset = 0.;
+
 
 
     @Override
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                                           destLocation.setLongitude(destLon);
 
                                           double bearingToDest = myLocation.bearingTo(destLocation);
+
                                           setDot(bearingToDest);
 
                                           String myCoords = "Lat: " + myLat + ", Long:" + myLon + ", Bearing: " + bearingToDest;
@@ -81,15 +84,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setDot(double deg){
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        float radius = width/4;
         double radian = degreeToRadian(deg);
         ImageView dot = (ImageView) findViewById(R.id.redDot);
         radian  += (Math.PI)/2;
-        float x = (float) Math.cos(radian) * RADIUS_COMPASS + RADIUS_COMPASS;
-        float y = (float) Math.sin(radian) * - RADIUS_COMPASS + RADIUS_COMPASS;
+        float x = (float) Math.cos(radian) * radius + radius;
+        float y = (float) Math.sin(radian) * - radius + radius;
 
         Log.e("x location))", "" +x);
         Log.e("y location))", "" +y);
-        dot.setY(y);
-        dot.setX(x);
+        dot.setY(y +20);
+        dot.setX(x-50);
     }
 }
