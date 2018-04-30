@@ -96,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
         float radius = width/2;
         double radian = degreeToRadian(deg);
         ImageView dot = (ImageView) findViewById(R.id.redDot);
-        radian  += (Math.PI)/2;
-        float x = (float) Math.cos(radian) * radius + radius;
-        float y = (float) Math.sin(radian) * - radius + radius;
+        radian  += (Math.PI);
+        float x = (float) - Math.sin(radian) * radius + radius;
+        float y = (float) Math.cos(radian) * radius + radius;
 
         Log.e("x location))", "" +x);
         Log.e("y location))", "" +y);
