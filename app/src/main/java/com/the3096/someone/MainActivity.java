@@ -2,48 +2,77 @@ package com.the3096.someone;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
-
+    final private float RADIUS_COMPASS = 200;
     LocationHelper locationHelper;
 
     final boolean sending = true;
 
-    Button button;
-    EditText textField;
+    EditText coordField;
 
     Thread networkThread;
+
+    Location myLocation;
+
+    static double offset = 0.;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = findViewById(R.id.button);
-        textField = findViewById(R.id.editText);
-
         locationHelper = new LocationHelper(this);
 
         networkThread = new Thread(new NetworkThread());
         networkThread.start();
 
+        final Button button = findViewById(R.id.button);
+        coordField = findViewById(R.id.boxGPS);
+        final EditText lonField = findViewById(R.id.boxLon);
+        final EditText latField = findViewById(R.id.boxLat);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                myLocation = locationHelper.getLocation();
+                Location destLocation = new Location("fake");
 
+                double myLat = myLocation.getLatitude();
+                double myLon = myLocation.getLongitude();
+                double destLon;
+                double destLat;
+
+                try {
+                    destLon = Double.parseDouble(lonField.getText().toString());
+                    destLat = Double.parseDouble(latField.getText().toString());
+                } catch(Exception e) {
+                    destLon = 0;
+                    destLat = 0;
+                }
+                destLocation.setLatitude(destLat);
+                destLocation.setLongitude(destLon);
+
+                double bearingToDest = myLocation.bearingTo(destLocation);
+
+                String myCoords = "Lat: " + myLat + ", Long:" + myLon + ", Bearing: " + bearingToDest;
+                coordField.setText(myCoords);
+                setDot(bearingToDest);
             }
-        });
+        } );
     }
 
     class NetworkThread implements Runnable {
@@ -52,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             String server = "192.168.1.106";
             int port = 1337;
 
-            while(true) {
+            while (true) {
                 try {
                     Socket socket;
                     DataOutputStream dOut;
@@ -78,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                         ServerSocket serverSocket = new ServerSocket(port);
                         socket = serverSocket.accept();
                         dIn = new DataInputStream(socket.getInputStream());
-                        textField.setText("Listening...");
+                        //textField.setText("Listening...");
 
                         double lat = -1, lon = -1;
                         boolean done = false;
@@ -96,8 +125,15 @@ public class MainActivity extends AppCompatActivity {
                                     done = true;
                             }
 
-                            String readStr = lat + "," + lon;
-                            textField.setText(readStr);
+                            String receiveStr = lat+","+lon;
+                            coordField.setText(receiveStr);
+
+                            Location receivedLoc = new Location("");
+                            receivedLoc.setLatitude(lat);
+                            receivedLoc.setLongitude(lon);
+
+                            double bearingToDest = myLocation.bearingTo(receivedLoc);
+                            setDot(bearingToDest);
                         }
                     }
                 } catch (Exception e) {
@@ -129,32 +165,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /* Called when the user taps the button.  Or button is not necessary? */
-    public void getDirections(View view) {
-
-        // Get current location coordinates (latitude, longititude) of user.
-        double userLong = 0;
-        double userLat = -122.129932;
-
-        // Get location coordinates of the second user.  Hard-code it as a constant for now.
-        double destinationLong = 37.362511;
-        double destinationLat = -122.129932;
-
-        //Calculate the bearing to the destination and display it in the activity
+    public double degreeToRadian(double deg) {
+        double converted = deg * (Math.PI / 180.0);
+        return converted;
     }
 
-    public double degreeToRadian(double degree) {
-        return degree * (Math.PI / 180.0);
-    }
+    public void setDot(double deg) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        float radius = width/2;
+        double radian = degreeToRadian(deg);
+        ImageView dot = (ImageView) findViewById(R.id.redDot);
+        radian  += (Math.PI);
+        float x = (float) - Math.sin(radian) * radius + radius;
+        float y = (float) Math.cos(radian) * radius + radius;
 
-    public double getBearing(double userLong, double userLat, double destLong, double destLat) {
-        userLong = degreeToRadian(userLong);
-        userLat = degreeToRadian(userLat);
-        destLong = degreeToRadian(destLong);
-        destLat = degreeToRadian(destLat);
-
-        double angle = Math.atan2(destLat - userLat, destLong - userLong);
-
-        return Math.PI - angle;
+        Log.e("x location))", "" +x);
+        Log.e("y location))", "" +y);
+        dot.setY(y +20);
+        dot.setX(x-50);
     }
 }
